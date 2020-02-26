@@ -1,0 +1,79 @@
+import { Component, OnInit } from '@angular/core';
+import { FormGroup,FormBuilder, Validators } from '@angular/forms';
+import { Login } from '../Models/classModels';
+import { AlertController, ModalController,PopoverController  } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { RestService } from '../rest.service';
+import { ModalComponent } from '../modal/modal.component';
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.page.html',
+  styleUrls: ['./login.page.scss'],
+})
+export class LoginPage implements OnInit {
+ public formcontrol : FormGroup;
+ public data: Login = new Login();
+  showMsg: any;
+  formValid: any;
+  errmsg: any;
+  valid: boolean = false;
+  server: any;
+  email: string;
+  password: string;
+
+  constructor(private fb: FormBuilder, private alertCtrl: AlertController,
+    private myRoute: Router, public rest: RestService,  private modalCtrl: ModalController,
+    public popoverController: PopoverController) {
+    this.formcontrol = this.fb.group({
+      email: ["", []],
+      password: ["", []]
+    });
+  }
+ 
+  ngOnInit() {
+    this.valid=false;
+    this.errmsg=false;
+  }
+ 
+
+
+  async confirm() {
+    let alert = await this.alertCtrl.create({
+      header: 'Hey User!',
+      message: 'Welcome logged In',
+      buttons: ['OK']
+    });
+    alert.present().then(() => {
+      this.modalCtrl.dismiss();
+    });
+  }
+
+  login(){
+    this.formcontrol.get("email").setValidators(Validators.required);
+  this.formcontrol.get("email").updateValueAndValidity();
+  this.formcontrol.get("password").setValidators(Validators.required);
+  this.formcontrol.get("password").updateValueAndValidity();
+  if (this.formcontrol.valid) {
+    console.log("Form is valid");
+  }
+  else {
+    this.valid=true;
+    console.log("There is still an error in the form");
+  }
+ 
+  
+  if (this.formcontrol.valid) {
+    
+if(this.formcontrol.get('email').value=="test@gmail.com" && this.formcontrol.get('password').value=="test" ){
+  this.confirm();
+  this.myRoute.navigate(['/user-dashboard']);
+}
+else{
+this.errmsg=true;
+alert('please insert valid credentails Email=test@gmail.com password=test')
+}
+  }
+  }
+}
+  
+
